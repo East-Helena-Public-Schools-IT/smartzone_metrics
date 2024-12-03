@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 use opentelemetry::{
     global,
-    metrics::{Meter, UpDownCounter},
+    metrics::{Gauge, Meter},
     KeyValue,
 };
 use prometheus::Registry;
@@ -14,7 +14,7 @@ use tokio::sync::RwLock;
 mod smartzone;
 
 struct Meters {
-    counters: HashMap<String, UpDownCounter<i64>>,
+    counters: HashMap<String, Gauge<i64>>,
     meter: Meter,
 }
 
@@ -25,8 +25,8 @@ async fn main() {
     let meter = global::meter("smartzone");
     // Create a Counter Instrument.
     let mut session = smartzone::Auth::new(
-        std::env::var("RUST_USERNAME").expect("Set RUST_USERNAME"),
-        std::env::var("RUST_PASSWORD").expect("Set RUST_PASSWORD"),
+        dotenvy::var("RUST_USERNAME").expect("Set RUST_USERNAME"),
+        dotenvy::var("RUST_PASSWORD").expect("Set RUST_PASSWORD"),
     );
     session.login().await;
     let auth = Arc::new(session);
@@ -73,42 +73,56 @@ async fn metrics(
 
         // Set metrics for each ap
         for ap in &full_aps.list {
-            let key = "AP".to_string()
-                + &ap
-                    .ap_mac
-                    .as_bytes()
-                    .iter()
-                    .map(|b| *b as char)
-                    .filter(|c| *c != ':')
-                    .collect::<String>();
-
-            let mut lock = meters.write().await;
-
-            // Look for the gauge, if it already exists just add more data to it
-            let counter = if let Some(x) = lock.counters.get(&key) {
-                x
-            } else {
-                // Otherwise create a new gauge and add it to the pool.
-                let meter = &lock.meter;
-                let x = meter.i64_up_down_counter(key.clone()).init();
-                lock.counters.insert(key.to_string(), x);
-                lock.counters
-                    .get(&key)
-                    .expect("How on earth is it not in the hashmap?")
-            };
-
-            // AFAIK it mutates an internal state
-            counter.add(
-                ap.alerts,
-                &[
+            
+            let data = vec![
                     KeyValue::new("DeviceName", ap.device_name.clone()),
+                    KeyValue::new("MAC", ap.ap_mac.clone()),
                     KeyValue::new("IP", ap.ip.clone()),
-                    KeyValue::new("TotalClients", ap.num_clients.to_string()),
-                    KeyValue::new("TX", ap.tx.to_string()),
-                    KeyValue::new("RX", ap.rx.to_string()),
-                    KeyValue::new("Status", ap.status.to_string()),
-                ],
-            );
+                    KeyValue::new("Status", ap.status.clone()),
+                    KeyValue::new("Zone", zone.name.clone()),
+                    KeyValue::new("LastSeen", ap.last_seen.to_string()),
+                ];
+
+            let lock = meters.write().await;
+            let meter = &lock.meter;
+
+            // TX
+            let tx = meter.u64_gauge("ap_tx").with_description("AP's transmitted traffic").init();
+            tx.record(ap.tx, &data);
+
+            // RX
+            let rx = meter.u64_gauge("ap_rx").with_description("AP's received traffic").init();
+            rx.record(ap.rx, &data);
+
+            // TotalClients
+            let clients = meter.u64_gauge("ap_clients").with_description("Total number of clients connected to this AP").init();
+            clients.record(ap.num_clients, &data);
+
+            // alerts
+            let alerts = meter.i64_gauge("ap_alerts").with_description("Total number of alerts").init();
+            alerts.record(ap.alerts, &data);
+
+            // airtime utilization flagged
+            let aflag = if
+                ap.is_airtime_utilization24_gflagged ||
+                ap.is_airtime_utilization50_gflagged ||
+                ap.is_airtime_utilization6_gflagged
+            { 1 } else { 0 };
+            let flags = meter.u64_gauge("ap_is_airtime_flagged").init();
+            flags.record(aflag, &data);
+
+            // connection failures
+            let fail = meter.f64_gauge("ap_failures").init();
+            fail.record(ap.connection_failures as f64, &data);
+
+            // latency flagged
+            let lflag = if 
+                ap.is_latency24_gflagged ||
+                ap.is_latency50_gflagged ||
+                ap.is_latency6_gflagged
+            { 1 } else { 0 };
+            let flags = meter.u64_gauge("ap_is_latency_flagged").init();
+            flags.record(lflag, &data);
         }
     }
 

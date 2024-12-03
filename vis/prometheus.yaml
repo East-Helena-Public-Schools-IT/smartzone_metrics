@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 60s 
+  query_log_file: /etc/prometheus/query.log
+
+scrape_configs:
+  - job_name: smartzone 
+    static_configs:
+      # put a list of all the nodes you are monitoring
+      - targets: ['localhost:8000']
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']

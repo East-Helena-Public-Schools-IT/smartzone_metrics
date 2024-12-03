@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+dotenvy = "0.15.7"
 opentelemetry = { version = "0.24.0", features = ["metrics", "otel_unstable"] }
 opentelemetry-prometheus = { version = "0.17.0", features = ["prometheus-encoding"] }
 opentelemetry_sdk = { version = "0.24.0", features = ["metrics", "rt-tokio"] }

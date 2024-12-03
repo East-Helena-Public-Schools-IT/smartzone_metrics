@@ -6,7 +6,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use std::sync::LazyLock;
 
 static URL: LazyLock<String> =
-    LazyLock::new(|| std::env::var("RUST_URL").expect("Set RUST_URL env"));
+    LazyLock::new(|| dotenvy::var("RUST_URL").expect("Set RUST_URL env"));
 
 #[derive(Serialize, Debug)]
 pub struct Auth {
@@ -139,7 +139,7 @@ impl Auth {
 #[derive(Deserialize, Debug)]
 pub struct Zone {
     id: String,
-    name: String,
+    pub name: String,
 }
 
 #[derive(Deserialize, Debug)]
