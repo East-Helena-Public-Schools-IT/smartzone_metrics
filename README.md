@@ -15,3 +15,6 @@ RUST_PASSWORD='password1!' # Smartzone password
 ```
 
 The user that you create for using the API only needs read access to APs.
+![Picture of the ap dashboard](ap.png "ap")
+![Picture of the overview dashboard](overview.png "overview")
+![Picture of the zone dashboard](zone.png "zone")
