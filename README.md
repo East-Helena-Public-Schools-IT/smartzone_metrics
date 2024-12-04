@@ -14,6 +14,8 @@ RUST_USERNAME='admin' # Smartzone username
 RUST_PASSWORD='password1!' # Smartzone password
 ```
 
+Also take a look at [the prometheus config](/vis/prometheus.yaml) to configure drop rules as it seems that smartzone can output the same AP twice, messing with your data.
+
 The user that you create for using the API only needs read access to APs.
 ![Picture of the ap dashboard](ap.png "ap")
 ![Picture of the overview dashboard](overview.png "overview")
