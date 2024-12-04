@@ -3,8 +3,7 @@ use reqwest::{
     Client, StatusCode,
 };
 use serde::{Deserialize, Deserializer, Serialize};
-use core::hash;
-use std::{fs::File, hash::{DefaultHasher, Hash, Hasher}, io::Write, sync::LazyLock};
+use std::{fs::File, io::Write, sync::LazyLock};
 
 use crate::ap;
 

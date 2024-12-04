@@ -1,7 +1,7 @@
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 use opentelemetry::{
     global,
-    metrics::{Gauge, Meter},
+    metrics::Meter,
     KeyValue,
 };
 use prometheus::Registry;
@@ -15,7 +15,6 @@ mod smartzone;
 mod ap;
 
 struct Meters {
-    counters: HashMap<String, Gauge<i64>>,
     meter: Meter,
 }
 
@@ -33,7 +32,6 @@ async fn main() {
     let auth = Arc::new(session);
 
     let dd = Meters {
-        counters: HashMap::new(),
         meter,
     };
 
