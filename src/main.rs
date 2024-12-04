@@ -78,14 +78,22 @@ async fn metrics(
                     KeyValue::new("DeviceName", ap.device_name.clone()),
                     KeyValue::new("MAC", ap.ap_mac.clone()),
                     KeyValue::new("IP", ap.ip.clone()),
-                    KeyValue::new("Status", ap.status.clone()),
                     KeyValue::new("Zone", zone.name.clone()),
+                ];
+
+            let mut data_verbose = vec![
+                    KeyValue::new("Status", ap.status.clone()),
                     KeyValue::new("LastSeen", ap.last_seen.to_string()),
                     KeyValue::new("Model", ap.model.to_string()),
-                ];
+            ];
+            data_verbose.append(&mut data.clone());
 
             let lock = meters.write().await;
             let meter = &lock.meter;
+
+            // Uptime
+            let tx = meter.u64_gauge("ap_uptime").with_description("AP's transmitted traffic").init();
+            tx.record(ap.uptime, &data_verbose);
 
             // TX
             let tx = meter.u64_gauge("ap_tx").with_description("AP's transmitted traffic").init();
