@@ -412,10 +412,9 @@ pub struct AP {
     pub indoor_map_xy: MapXY,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize, Default)]
 pub struct MapXY {
     pub x: f32,
     pub y: f32,
 }
-
-// #[serde(deserialize_with="nullable_u64")]

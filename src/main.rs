@@ -8,7 +8,7 @@ use prometheus::Registry;
 use rocket::{
     get, routes, State,
 };
-use smartzone::Auth;
+use smartzone::{Auth, FilterContainer};
 use tokio::sync::RwLock;
 
 mod smartzone;
@@ -61,18 +61,18 @@ async fn metrics(
     // Go thru all the zones
     for zone in &auth.get_zones().await {
         // Get all the APs in the zone
-        let aps = auth.get_aps_in_zone(zone).await;
-        let full_aps = auth
-        // TODO query aps will NOT return all the aps in a zone, it has the `hasMore` flag for a reason
-            .query_aps(
-                aps.iter()
-                    .map(smartzone::Filter::from)
-                    .collect::<smartzone::FilterContainer>(),
-            )
-            .await;
+        let mut filter: FilterContainer = zone.into();
+        let mut left = true;
+        let mut all_aps = Vec::new();
+        while left {
+            let mut aps = auth.query_aps(filter.clone()).await;
+            left = aps.has_more;
+            filter.page += 1;
+            all_aps.append(&mut aps.list);
+        }
 
         // Set metrics for each ap
-        for ap in &full_aps.list {
+        for ap in &all_aps{
             
             let data = vec![
                     KeyValue::new("DeviceName", ap.device_name.clone()),

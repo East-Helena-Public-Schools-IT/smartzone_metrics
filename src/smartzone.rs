@@ -112,30 +112,6 @@ impl Auth {
         panic!("Failed to get zones")
     }
 
-    pub async fn get_aps_in_zone(&self, zone: &Zone) -> Vec<MiniAp> {
-        #[derive(Deserialize)]
-        struct ZoneAPs {
-            members: Vec<MiniAp>,
-        }
-
-        if let Some(s) = &self.session {
-            let response = self
-                .client
-                .get(format!(
-                    "{}/wsg/api/public/v11_1/rkszones/{}/apgroups/default",
-                    &*URL, zone.id
-                ))
-                .header("Cookie", s)
-                .send()
-                .await
-                .unwrap();
-            if let Ok(json) = response.text().await {
-                return serde_json::from_str::<ZoneAPs>(&json).unwrap().members;
-            }
-        }
-        panic!("Failed to get aps in zones")
-    }
-
     pub async fn query_aps(&self, filter: FilterContainer) -> QueryResults<ap::AP> {
         if let Some(s) = &self.session {
             let response = self
@@ -173,36 +149,49 @@ pub struct Zone {
     pub name: String,
 }
 
-#[derive(Deserialize, Debug)]
-pub struct MiniAp {
-    #[serde(rename = "apMac")]
-    ap_mac: String,
-    #[serde(rename = "apSerial")]
-    ap_serial: String,
+impl Into<FilterContainer> for &Zone {
+    fn into(self) -> FilterContainer {
+        FilterContainer { or: vec![self.into()], page: 1, limit: 30 } 
+    }
 }
 
-#[derive(Serialize, Debug)]
-pub struct FilterContainer {
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(rename = "extraFilters")]
-    and: Vec<Filter>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(rename = "filters")]
-    or: Vec<Filter>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    #[serde(rename = "extraNotFilters")]
-    nand: Vec<Filter>
-}
-
-impl FromIterator<Filter> for FilterContainer {
-    fn from_iter<T: IntoIterator<Item = Filter>>(iter: T) -> Self {
-        Self { and: Vec::new(), nand: Vec::new(),
-            or: iter.into_iter().collect()
+impl Into<Filter> for &Zone {
+    fn into(self) -> Filter {
+        Filter {
+            ttype: String::from("ZONE"),
+            value: self.id.to_owned(),
+            operator: String::from("eq"),
         }
     }
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Deserialize, Debug)]
+pub struct MiniAp {
+    #[serde(rename = "apMac")]
+    ap_mac: String,
+}
+
+#[derive(Serialize, Debug, Default, Clone)]
+pub struct FilterContainer {
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(rename = "filters")]
+    pub or: Vec<Filter>,
+    pub page: usize,
+    pub limit: usize,
+}
+impl FromIterator<Filter> for FilterContainer {
+    fn from_iter<T: IntoIterator<Item = Filter>>(iter: T) -> Self {
+        Self {
+            or: iter.into_iter().collect(),
+            ..Default::default()
+        }
+    }
+}
+
+
+
+
+#[derive(Serialize, Debug, Clone)]
 pub struct Filter {
     #[serde(rename = "type")]
     ttype: String,
@@ -225,9 +214,9 @@ pub struct QueryResults<T> {
     #[serde(rename = "totalCount")]
     total_count: u8,
     #[serde(rename = "hasMore")]
-    has_more: bool,
+    pub has_more: bool,
     #[serde(rename = "firstIndex")]
-    first_index: u8,
+    pub first_index: u8,
     pub list: Vec<T>
 }
 
