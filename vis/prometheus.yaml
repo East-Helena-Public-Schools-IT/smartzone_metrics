@@ -7,6 +7,14 @@ scrape_configs:
     static_configs:
       # put a list of all the nodes you are monitoring
       - targets: ['localhost:8000']
+    metric_relabel_configs:
+      - source_labels: [Zone]
+        action: drop
+        regex: 'Default Zone'
+      - source_labels: [Zone]
+        action: drop
+        regex: 'R550'
+
   - job_name: prometheus
     static_configs:
       - targets: ['localhost:9090']
