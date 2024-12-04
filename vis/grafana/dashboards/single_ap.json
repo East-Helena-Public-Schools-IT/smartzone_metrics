@@ -55,7 +55,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": 300000,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -101,7 +101,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "datasource": {
@@ -195,7 +195,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "datasource": {
@@ -267,7 +267,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": 300000,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -313,7 +313,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "datasource": {
@@ -406,7 +406,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "datasource": {
@@ -478,7 +478,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": 300000,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -523,7 +523,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -592,7 +592,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
-            "spanNulls": false,
+            "spanNulls": 300000,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -638,7 +638,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "disableTextWrap": false,
@@ -691,7 +691,7 @@
             },
             "insertNulls": false,
             "lineWidth": 0,
-            "spanNulls": false
+            "spanNulls": 180000
           },
           "mappings": [],
           "thresholds": {
@@ -728,7 +728,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "11.3.1",
+      "pluginVersion": "11.3.2",
       "targets": [
         {
           "disableTextWrap": false,
