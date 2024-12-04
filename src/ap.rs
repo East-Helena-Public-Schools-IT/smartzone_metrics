@@ -349,15 +349,19 @@ pub struct AP {
     #[serde(deserialize_with = "deserialize_null_default")]
     pub fips_enabled: String,
     #[serde(rename = "medianTxRadioMCSRate24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub median_tx_radio_mcsrate24_g: u64,
     #[serde(rename = "medianTxRadioMCSRate50G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub median_tx_radio_mcsrate50_g: u64,
     #[serde(rename = "medianTxRadioMCSRate6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
     pub median_tx_radio_mcsrate6_g: u64,
     #[serde(rename = "medianRxRadioMCSRate24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub median_rx_radio_mcsrate24_g: u64,
     #[serde(rename = "medianRxRadioMCSRate50G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub median_rx_radio_mcsrate50_g: u64,
     #[serde(rename = "medianRxRadioMCSRate6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
