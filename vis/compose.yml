@@ -7,7 +7,7 @@ services:
     volumes:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
       # persist data
-      # - prometheus_storage:/prometheus
+      - prometheus_storage:/prometheus
     command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
     network_mode: host
 
@@ -27,6 +27,5 @@ services:
     depends_on:
       - prometheus
 
-# volumes:
-#   prometheus_storage:
-#   grafana_storage:
+volumes:
+  prometheus_storage:

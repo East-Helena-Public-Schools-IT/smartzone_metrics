@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [],
   "panels": [
     {
@@ -71,10 +71,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -82,17 +78,20 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 10,
         "w": 20,
         "x": 0,
         "y": 0
       },
-      "id": 5,
+      "id": 1,
       "options": {
         "legend": {
-          "calcs": [],
+          "calcs": [
+            "max",
+            "lastNotNull"
+          ],
           "displayMode": "list",
-          "placement": "bottom",
+          "placement": "right",
           "showLegend": true
         },
         "tooltip": {
@@ -103,18 +102,22 @@
       "pluginVersion": "11.3.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "ap_failures{zone=\"$selected_zone\"}",
+          "expr": "sum by(Zone) (ap_clients)",
           "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "includeNullMetadata": false,
           "legendFormat": "{{DeviceName}}",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Connection Failtures",
+      "title": "Clients",
       "type": "timeseries"
     },
     {
@@ -146,214 +149,6 @@
         "x": 20,
         "y": 0
       },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum(ap_clients{Zone=\"$selected_zone\"})",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Clients",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-red",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 20,
-        "x": 0,
-        "y": 4
-      },
-      "id": 6,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "ap_is_airtime_flagged{zon=\"$selected_zone\"} > 0",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{DeviceName}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "ap_is_latency_flagged{Zone=\"$selected_zone\"} > 0",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
-        }
-      ],
-      "title": "Flagged",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "dark-red",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 20,
-        "x": 0,
-        "y": 8
-      },
-      "id": 4,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto"
-      },
-      "pluginVersion": "11.3.1",
-      "targets": [
-        {
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(DeviceName) (ap_alerts{Zone=\"$selected_zone\"} > 0)",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "{{DeviceName}}",
-          "range": true,
-          "refId": "A",
-          "useBackend": false
-        }
-      ],
-      "title": "Alerts",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "decbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 4,
-        "x": 20,
-        "y": 9
-      },
       "id": 3,
       "options": {
         "colorMode": "value",
@@ -377,10 +172,76 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(ap_rx{Zone=\"$selected_zone\"})",
+          "expr": "sum(ap_clients)",
           "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "legendFormat": "Receive (RX)",
+          "includeNullMetadata": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Total Clients",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": true,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 4,
+        "x": 20,
+        "y": 9
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.3.1",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum(ap_rx)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
+          "legendFormat": "Receive",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -392,18 +253,18 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum(ap_tx{Zone=\"$selected_zone\"})",
+          "expr": "sum(ap_tx)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
-          "legendFormat": "Transmit (TX)",
+          "legendFormat": "Transmit",
           "range": true,
           "refId": "B",
           "useBackend": false
         }
       ],
-      "title": "RX/TX sum",
+      "title": "Total Rx / Tx",
       "type": "stat"
     },
     {
@@ -425,7 +286,7 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
+            "fillOpacity": 22,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -433,7 +294,7 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -462,17 +323,18 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "decbytes"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 20,
         "x": 0,
-        "y": 12
+        "y": 10
       },
-      "id": 1,
+      "id": 2,
       "options": {
         "legend": {
           "calcs": [],
@@ -488,59 +350,121 @@
       "pluginVersion": "11.3.1",
       "targets": [
         {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum(ap_tx)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
+          "legendFormat": "Transmit",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
           "datasource": {
             "type": "prometheus",
             "uid": "prometheus"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "ap_clients{Zone=\"$selected_zone\"}",
+          "expr": "sum(ap_rx) * -1",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "Recieve",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Tx / Rx",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.3.1",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(DeviceName) (ap_alerts) > 0",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "{{DeviceName}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Clients",
-      "type": "timeseries"
+      "title": "AP Alerts",
+      "type": "gauge"
     }
   ],
   "preload": false,
+  "refresh": "1m",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
-    "list": [
-      {
-        "current": {
-          "text": "EH HS R550",
-          "value": "EH HS R550"
-        },
-        "definition": "label_values(clients,Zone)",
-        "description": "",
-        "label": "Zone",
-        "name": "selected_zone",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(clients,Zone)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
-      }
-    ]
+    "list": []
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-60m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "By Zone",
-  "uid": "ce5ud52gy79xcf",
-  "version": 18,
+  "title": "System Overview",
+  "uid": "de5uar48059moe",
+  "version": 1,
   "weekStart": ""
 }
