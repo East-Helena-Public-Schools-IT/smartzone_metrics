@@ -1,4 +1,5 @@
 use serde::Deserialize;
+use crate::smartzone::*;
 
 #[derive(Deserialize)]
 #[allow(dead_code)]
@@ -21,34 +22,34 @@ pub struct AP {
     pub noise_24g: i64,
     #[serde(rename = "noise5G")]
     pub noise_5g: i64,
-    // "noise6G": null,
     #[serde(rename = "noise6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub noise_6g: i64,
     #[serde(rename = "airtime24G")]
     pub airtime_24g: u64,
     #[serde(rename = "airtime5G")]
     pub airtime_5g: u64,
-    // "airtime6G": null,
     #[serde(rename = "airtime6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub airtime_6g: u64,
     #[serde(rename = "latency24G")]
     pub latency24g: u64,
-    // "latency50G": 0,
     #[serde(rename = "latency50G")]
-    pub latency50G: u64,
-    // "latency6G": null,
+    pub latency50_g: u64,
     #[serde(rename = "latency6G")]
-    pub latency6G: u64,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub latency6_g: u64,
     #[serde(rename = "capacity")]
     pub capacity: u64,
     #[serde(rename = "capacity24G")]
-    pub capacity24G: u64,
+    pub capacity24_g: u64,
     #[serde(rename = "capacity50G")]
-    pub capacity50G: u64,
+    pub capacity50_g: u64,
     #[serde(rename = "capacity6G")]
-    pub capacity6G: u64,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub capacity6_g: u64,
     #[serde(rename = "connectionFailure")]
-    pub connection_failures: u64,
+    pub connection_failures: f64,
     #[serde(rename = "model")]
     pub model: String,
     #[serde(rename = "apMac")]
@@ -58,446 +59,359 @@ pub struct AP {
     #[serde(rename = "channel5G")]
     pub channel_5g: String,
     #[serde(rename = "channel6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub channel_6g: String,
     #[serde(rename = "channel24gValue")]
     pub channel_24g_value: i64,
-    // "channel50gValue": 165,
     #[serde(rename = "channel50gValue")]
-    pub channel50gValue: String,
-    // "channel6gValue": null,
+    pub channel50g_value: u64,
     #[serde(rename = "channel6gValue")]
-    pub channel6gValue: String,
-    // "meshRole": "DISABLED",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub channel6g_value: u64,
     #[serde(rename = "meshRole")]
-    pub meshRole: String,
-    // "meshMode": "Auto",
+    pub mesh_role: String,
     #[serde(rename = "meshMode")]
-    pub meshMode: String,
-    // "zoneName": "R510- PPE",
+    pub mesh_mode: String,
     #[serde(rename = "zoneName")]
-    pub zoneName: String,
-    // "zoneAffinityProfileName": null,
+    pub zone_name: String,
     #[serde(rename = "zoneAffinityProfileName")]
-    pub zoneAffinityProfileName: String,
-    // "apGroupName": "default",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub zone_affinity_profile_name: String,
     #[serde(rename = "apGroupName")]
-    pub apGroupName: String,
-    // "extIp": "10.24.1.202",
+    pub ap_group_name: String,
     #[serde(rename = "extIp")]
-    pub extIp: String,
-    // "extPort": "58883",
+    pub ext_ip: String,
     #[serde(rename = "extPort")]
-    pub extPort: String,
-    // "firmwareVersion": "6.1.1.0.1322",
+    pub ext_port: String,
     #[serde(rename = "firmwareVersion")]
-    pub firmwareVersion: String,
-    // "serial": "121839000189",
+    pub firmware_version: String,
     #[serde(rename = "serial")]
     pub serial: String,
-    // "retry24G": 0,
     #[serde(rename = "retry24G")]
-    pub retry24G: String,
-    // "retry5G": 11448,
+    pub retry24_g: u64,
     #[serde(rename = "retry5G")]
-    pub retry5G: String,
-    // "retry6G": null,
+    pub retry5_g: u64,
     #[serde(rename = "retry6G")]
-    pub retry6G: String,
-    // "configurationStatus": "Up-to-date",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub retry6_g: u64,
     #[serde(rename = "configurationStatus")]
-    pub configurationStatus: String,
-    // "lastSeen": 1733327325000,
+    pub configuration_status: String,
     #[serde(rename = "lastSeen")]
-    pub last_seen: String,
-    // "numClients": 37,
+    pub last_seen: u64,
     #[serde(rename = "numClients")]
     pub num_clients: u64,
-    // "numClients24G": 0,
     #[serde(rename = "numClients24G")]
     pub num_clients_24g: u64,
-    // "numClients5G": 37,
     #[serde(rename = "numClients5G")]
     pub num_clients_5g: u64,
-    // "numClients6G": null,
     #[serde(rename = "numClients6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub num_clients_6g: u64,
-    // "tx": 10713562,
     #[serde(rename = "tx")]
     pub tx: u64,
-    // "tx24G": 0,
     #[serde(rename = "tx24G")]
     pub tx_24g: u64,
-    // "tx50G": 10713562,
     #[serde(rename = "tx50G")]
     pub tx_50g: u64,
-    // "tx6G": 0,
     #[serde(rename = "tx6G")]
     pub tx_6g: u64,
-    // "rx": 1135785,
     #[serde(rename = "rx")]
     pub rx: u64,
-    // "rx24G": 0,
     #[serde(rename = "rx24G")]
     pub rx_24g: u64,
-    // "rx50G": 1135785,
     #[serde(rename = "rx50G")]
     pub rx_50g: u64,
-    // "rx6G": 0,
     #[serde(rename = "rx6G")]
     pub rx_6g: u64,
-    // "txRx24G": 0,
     #[serde(rename = "txRx24G")]
-    pub txRx_24g: u64,
-    // "txRx50G": 11849347,
+    pub tx_rx_24g: u64,
     #[serde(rename = "txRx50G")]
     pub tx_rx_50g: u64,
-    // "txRx6G": 0,
     #[serde(rename = "txRx6G")]
     pub tx_rx_6g: u64,
-    // "location": "",
     #[serde(rename = "location")]
     pub location: String,
-    // "wlanGroup24Id": "0749ae52-d756-11ea-96ad-000000000300",
     #[serde(rename = "wlanGroup24Id")]
-    pub wlanGroup24Id: String,
-    // "wlanGroup50Id": "0749ae52-d756-11ea-96ad-000000000300",
+    pub wlan_group24_id: String,
     #[serde(rename = "wlanGroup50Id")]
-    pub wlanGroup50Id: String,
-    // "wlanGroup6gId": null,
+    pub wlan_group50_id: String,
     #[serde(rename = "wlanGroup6gId")]
-    pub wlanGroup6gId: String,
-    // "wlanGroup24Name": "default",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub wlan_group6g_id: String,
     #[serde(rename = "wlanGroup24Name")]
-    pub wlanGroup24Name: String,
-    // "wlanGroup50Name": "default",
+    pub wlan_group24_name: String,
     #[serde(rename = "wlanGroup50Name")]
-    pub wlanGroup50Name: String,
-    // "wlanGroup6gName": null,
+    pub wlan_group50_name: String,
     #[serde(rename = "wlanGroup6gName")]
-    pub wlanGroup6gName: String,
-    // "enabledBonjourGateway": false,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub wlan_group6g_name: String,
     #[serde(rename = "enabledBonjourGateway")]
-    pub enabledBonjourGateway: String,
-    // "controlBladeName": "evms",
+    pub enabled_bonjour_gateway: bool,
     #[serde(rename = "controlBladeName")]
-    pub controlBladeName: String,
-    // "lbsStatus": "Disable",
+    pub control_blade_name: String,
     #[serde(rename = "lbsStatus")]
-    pub lbsStatus: String,
-    // "administrativeState": "Unlocked",
+    pub lbs_status: String,
     #[serde(rename = "administrativeState")]
-    pub administrativeState: String,
-    // "registrationState": "Approved",
+    pub administrative_state: String,
     #[serde(rename = "registrationState")]
-    pub registrationState: String,
-    // "provisionMethod": "Discovered",
+    pub registration_state: String,
     #[serde(rename = "provisionMethod")]
-    pub provisionMethod: String,
-    // "provisionStage": null,
+    pub provision_method: String,
     #[serde(rename = "provisionStage")]
-    pub provisionStage: String,
-    // "registrationTime": 1532716385871,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub provision_stage: String,
     #[serde(rename = "registrationTime")]
-    pub registrationTime: String,
-    // "managementVlan": 1,
+    pub registration_time: u64,
     #[serde(rename = "managementVlan")]
-    pub managementVlan: String,
-    // "configOverride": false,
+    pub management_vlan: u64,
     #[serde(rename = "configOverride")]
-    pub configOverride: String,
-    // "indoorMapId": "402bc1c1-d50e-11eb-b401-e26e4d8d1ad8",
+    pub config_override: bool,
     #[serde(rename = "indoorMapId")]
-    pub indoorMapId: String,
-    // "apGroupId": "60e88ab5-0449-4531-b7d6-4aa60aaa77d2",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub indoor_map_id: String,
     #[serde(rename = "apGroupId")]
-    pub apGroupId: String,
-    // "indoorMapName": "Prickly Pear Elementary",
+    pub ap_group_id: String,
     #[serde(rename = "indoorMapName")]
-    pub indoorMapName: String,
-    // "indoorMapLocation": "226 E Clinton St, East Helena, MT 59635",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub indoor_map_name: String,
     #[serde(rename = "indoorMapLocation")]
-    pub indoorMapLocation: String,
-    // "deviceGps": "",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub indoor_map_location: String,
     #[serde(rename = "deviceGps")]
-    pub deviceGps: String,
-    // "connectionStatus": "Connect",
+    pub device_gps: String,
     #[serde(rename = "connectionStatus")]
-    pub connectionStatus: String,
-    // "zoneId": "50979e27-2203-420e-b32b-1669af6dcfd6",
+    pub connection_status: String,
     #[serde(rename = "zoneId")]
-    pub zoneId: String,
-    // "zoneFirmwareVersion": "6.1.1.0.1322",
+    pub zone_id: String,
     #[serde(rename = "zoneFirmwareVersion")]
-    pub zoneFirmwareVersion: String,
-    // "domainId": "8b2081d5-9662-40d9-a3db-2a3cf4dde3f7",
+    pub zone_firmware_version: String,
     #[serde(rename = "domainId")]
-    pub domainId: String,
-    // "domainName": "Administration Domain",
+    pub domain_id: String,
     #[serde(rename = "domainName")]
-    pub domainName: String,
-    // "partnerDomainId": "8b2081d5-9662-40d9-a3db-2a3cf4dde3f7",
+    pub domain_name: String,
     #[serde(rename = "partnerDomainId")]
-    pub partnerDomainId: String,
-    // "dpIp": "",
+    pub partner_domain_id: String,
     #[serde(rename = "dpIp")]
-    pub dpIp: String,
-    // "controlBladeId": "2c15640e-2ed5-433a-9eb2-d24785d2a9c8",
+    pub dp_ip: String,
     #[serde(rename = "controlBladeId")]
-    pub controlBladeId: String,
-    // "isCriticalAp": false,
+    pub control_blade_id: String,
     #[serde(rename = "isCriticalAp")]
-    pub isCriticalAp: String,
-    // "crashDump": 1,
+    pub is_critical_ap: bool,
     #[serde(rename = "crashDump")]
-    pub crashDump: String,
-    // "cableModemSupported": false,
+    pub crash_dump: u64,
     #[serde(rename = "cableModemSupported")]
-    pub cableModemSupported: String,
-    // "cableModemResetSupported": false,
+    pub cable_modem_supported: bool,
     #[serde(rename = "cableModemResetSupported")]
-    pub cableModemResetSupported: String,
+    pub cable_modem_reset_supported: bool,
     // "swapInMac": null,
     #[serde(rename = "swapInMac")]
-    pub swapInMac: String,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub swap_in_mac: String,
     // "swapOutMac": null,
     #[serde(rename = "swapOutMac")]
-    pub swapOutMac: String,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub swap_out_mac: String,
     #[serde(rename = "isOverallHealthStatusFlagged")]
-    pub isOverallHealthStatusFlagged: bool,
+    pub is_overall_health_status_flagged: bool,
     #[serde(rename = "isLatency24GFlagged")]
     pub is_latency_24g_flagged: bool,
     #[serde(rename = "isLatency50GFlagged")]
     pub is_latency_50g_flagged: bool,
     #[serde(rename = "isLatency6GFlagged")]
-    pub isLatency6GFlagged: bool,
+    pub is_latency6_gflagged: bool,
     #[serde(rename = "isCapacity24GFlagged")]
-    pub isCapacity24GFlagged: bool,
+    pub is_capacity24_gflagged: bool,
     #[serde(rename = "isCapacity50GFlagged")]
-    pub isCapacity50GFlagged: bool,
+    pub is_capacity50_gflagged: bool,
     #[serde(rename = "isCapacity6GFlagged")]
-    pub isCapacity6GFlagged: bool,
-    // "isConnectionFailure24GFlagged": false,
+    pub is_capacity6_gflagged: bool,
     #[serde(rename = "isConnectionFailure24GFlagged")]
-    pub isConnectionFailure24GFlagged: String,
-    // "isConnectionFailure50GFlagged": false,
+    pub is_connection_failure24_gflagged: bool,
     #[serde(rename = "isConnectionFailure50GFlagged")]
-    pub isConnectionFailure50GFlagged: String,
-    // "isConnectionFailure6GFlagged": false,
+    pub is_connection_failure50_gflagged: bool,
     #[serde(rename = "isConnectionFailure6GFlagged")]
-    pub isConnectionFailure6GFlagged: String,
-    // "isConnectionTotalCountFlagged": false,
+    pub is_connection_failure6_gflagged: bool,
     #[serde(rename = "isConnectionTotalCountFlagged")]
-    pub isConnectionTotalCountFlagged: String,
-    // "isConnectionFailureFlagged": false,
+    pub is_connection_total_count_flagged: bool,
     #[serde(rename = "isConnectionFailureFlagged")]
-    pub isConnectionFailureFlagged: String,
-    // "isAirtimeUtilization24GFlagged": false,
+    pub is_connection_failure_flagged: bool,
     #[serde(rename = "isAirtimeUtilization24GFlagged")]
-    pub isAirtimeUtilization24GFlagged: String,
-    // "isAirtimeUtilization50GFlagged": false,
+    pub is_airtime_utilization24_gflagged: bool,
     #[serde(rename = "isAirtimeUtilization50GFlagged")]
-    pub isAirtimeUtilization50GFlagged: String,
-    // "isAirtimeUtilization6GFlagged": false,
+    pub is_airtime_utilization50_gflagged: bool,
     #[serde(rename = "isAirtimeUtilization6GFlagged")]
-    pub isAirtimeUtilization6GFlagged: String,
-    // "uptime": 12866158,
+    pub is_airtime_utilization6_gflagged: bool,
     #[serde(rename = "uptime")]
-    pub uptime: String,
-    // "eirp24G": null,
+    pub uptime: u64,
     #[serde(rename = "eirp24G")]
-    pub eirp24G: String,
-    // "eirp50G": 24,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub eirp24_g: u64,
     #[serde(rename = "eirp50G")]
-    pub eirp50G: String,
-    // "eirp6G": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub eirp50_g: u64,
     #[serde(rename = "eirp6G")]
-    pub eirp6G: String,
-    // "supportFips": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub eirp6_g: u64,
     #[serde(rename = "supportFips")]
-    pub supportFips: String,
-    // "ipsecSessionTime": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub support_fips: String,
     #[serde(rename = "ipsecSessionTime")]
-    pub ipsecSessionTime: String,
-    // "ipsecTxPkts": 0,
+    pub ipsec_session_time: u64,
     #[serde(rename = "ipsecTxPkts")]
-    pub ipsecTxPkts: String,
-    // "ipsecRxPkts": 0,
+    pub ipsec_tx_pkts: u64,
     #[serde(rename = "ipsecRxPkts")]
-    pub ipsecRxPkts: String,
-    // "ipsecTxBytes": 0,
+    pub ipsec_rx_pkts: u64,
     #[serde(rename = "ipsecTxBytes")]
-    pub ipsecTxBytes: String,
-    // "ipsecRxBytes": 0,
+    pub ipsec_tx_bytes: u64,
     #[serde(rename = "ipsecRxBytes")]
-    pub ipsecRxBytes: String,
-    // "ipsecTxDropPkts": 0,
+    pub ipsec_rx_bytes: u64,
     #[serde(rename = "ipsecTxDropPkts")]
-    pub ipsecTxDropPkts: String,
-    // "ipsecRxDropPkts": 0,
+    pub ipsec_tx_drop_pkts: u64,
     #[serde(rename = "ipsecRxDropPkts")]
-    pub ipsecRxDropPkts: String,
-    // "ipsecTxIdleTime": 0,
+    pub ipsec_rx_drop_pkts: u64,
     #[serde(rename = "ipsecTxIdleTime")]
-    pub ipsecTxIdleTime: String,
-    // "ipsecRxIdleTime": 0,
+    pub ipsec_tx_idle_time: u64,
     #[serde(rename = "ipsecRxIdleTime")]
-    pub ipsecRxIdleTime: String,
-    // "ipType": "IPV4",
+    pub ipsec_rx_idle_time: u64,
     #[serde(rename = "ipType")]
-    pub ipType: String,
-    // "ipv6Type": "Autoconfig",
+    pub ip_type: String,
     #[serde(rename = "ipv6Type")]
-    pub ipv6Type: String,
-    // "packetCaptureState": "Idle",
+    pub ipv6_type: String,
     #[serde(rename = "packetCaptureState")]
-    pub packetCaptureState: String,
-    // "cellularWanInterface": null,
+    pub packet_capture_state: String,
     #[serde(rename = "cellularWanInterface")]
-    pub cellularWanInterface: String,
-    // "cellularConnectionStatus": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_wan_interface: String,
     #[serde(rename = "cellularConnectionStatus")]
-    pub cellularConnectionStatus: String,
-    // "cellularSignalStrength": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_connection_status: String,
     #[serde(rename = "cellularSignalStrength")]
-    pub cellularSignalStrength: String,
-    // "cellularIMSISIM0": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_signal_strength: String,
     #[serde(rename = "cellularIMSISIM0")]
-    pub cellularIMSISIM0: String,
-    // "cellularIMSISIM1": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_imsisim0: String,
     #[serde(rename = "cellularIMSISIM1")]
-    pub cellularIMSISIM1: String,
-    // "cellularICCIDSIM0": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_imsisim1: String,
     #[serde(rename = "cellularICCIDSIM0")]
-    pub cellularICCIDSIM0: String,
-    // "cellularICCIDSIM1": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_iccidsim0: String,
     #[serde(rename = "cellularICCIDSIM1")]
-    pub cellularICCIDSIM1: String,
-    // "cellularIsSIM0Present": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_iccidsim1: String,
     #[serde(rename = "cellularIsSIM0Present")]
-    pub cellularIsSIM0Present: String,
-    // "cellularIsSIM1Present": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_is_sim0_present: String,
     #[serde(rename = "cellularIsSIM1Present")]
-    pub cellularIsSIM1Present: String,
-    // "cellularTxBytesSIM0": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_is_sim1_present: String,
     #[serde(rename = "cellularTxBytesSIM0")]
-    pub cellularTxBytesSIM0: String,
-    // "cellularTxBytesSIM1": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_tx_bytes_sim0: String,
     #[serde(rename = "cellularTxBytesSIM1")]
-    pub cellularTxBytesSIM1: String,
-    // "cellularRxBytesSIM0": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_tx_bytes_sim1: String,
     #[serde(rename = "cellularRxBytesSIM0")]
-    pub cellularRxBytesSIM0: String,
-    // "cellularRxBytesSIM1": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_rx_bytes_sim0: String,
     #[serde(rename = "cellularRxBytesSIM1")]
-    pub cellularRxBytesSIM1: String,
-    // "cellularActiveSim": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_rx_bytes_sim1: String,
     #[serde(rename = "cellularActiveSim")]
-    pub cellularActiveSim: String,
-    // "cellularIPaddress": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_active_sim: String,
     #[serde(rename = "cellularIPaddress")]
-    pub cellularIPaddress: String,
-    // "cellularSubnetMask": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_ipaddress: String,
     #[serde(rename = "cellularSubnetMask")]
-    pub cellularSubnetMask: String,
-    // "cellularDefaultGateway": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_subnet_mask: String,
     #[serde(rename = "cellularDefaultGateway")]
-    pub cellularDefaultGateway: String,
-    // "cellularOperator": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_default_gateway: String,
     #[serde(rename = "cellularOperator")]
-    pub cellularOperator: String,
-    // "cellular3G4GChannel": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_operator: String,
     #[serde(rename = "cellular3G4GChannel")]
-    pub cellular3G4GChannel: String,
-    // "cellularCountry": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular3_g4_gchannel: String,
     #[serde(rename = "cellularCountry")]
-    pub cellularCountry: String,
-    // "cellularRadioUptime": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_country: String,
     #[serde(rename = "cellularRadioUptime")]
-    pub cellularRadioUptime: String,
-    // "cellularGpsHistory": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_radio_uptime: String,
     #[serde(rename = "cellularGpsHistory")]
-    pub cellularGpsHistory: String,
-    // "fipsEnabled": null,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cellular_gps_history: String,
     #[serde(rename = "fipsEnabled")]
-    pub fipsEnabled: String,
-    // "medianTxRadioMCSRate24G": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub fips_enabled: String,
     #[serde(rename = "medianTxRadioMCSRate24G")]
-    pub medianTxRadioMCSRate24G: String,
-    // "medianTxRadioMCSRate50G": 156000,
+    pub median_tx_radio_mcsrate24_g: u64,
     #[serde(rename = "medianTxRadioMCSRate50G")]
-    pub medianTxRadioMCSRate50G: String,
-    // "medianTxRadioMCSRate6G": null,
+    pub median_tx_radio_mcsrate50_g: u64,
     #[serde(rename = "medianTxRadioMCSRate6G")]
-    pub medianTxRadioMCSRate6G: String,
-    // "medianRxRadioMCSRate24G": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub median_tx_radio_mcsrate6_g: u64,
     #[serde(rename = "medianRxRadioMCSRate24G")]
-    pub medianRxRadioMCSRate24G: String,
-    // "medianRxRadioMCSRate50G": 0,
+    pub median_rx_radio_mcsrate24_g: u64,
     #[serde(rename = "medianRxRadioMCSRate50G")]
-    pub medianRxRadioMCSRate50G: String,
-    // "medianRxRadioMCSRate6G": null,
+    pub median_rx_radio_mcsrate50_g: u64,
     #[serde(rename = "medianRxRadioMCSRate6G")]
-    pub medianRxRadioMCSRate6G: String,
-    // "monitoringEnabled": false,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub median_rx_radio_mcsrate6_g: u64,
     #[serde(rename = "monitoringEnabled")]
-    pub monitoringEnabled: String,
-    // "txPowerOffset24G": 0,
+    pub monitoring_enabled: bool,
     #[serde(rename = "txPowerOffset24G")]
-    pub txPowerOffset24G: String,
-    // "txPowerOffset5G": 0,
+    pub tx_power_offset24_g: u64,
     #[serde(rename = "txPowerOffset5G")]
-    pub txPowerOffset5G: String,
-    // "txPowerOffset6G": null,
+    pub tx_power_offset5_g: u64,
     #[serde(rename = "txPowerOffset6G")]
-    pub txPowerOffset6G: String,
-    // "rxDesense24G": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub tx_power_offset6_g: u64,
     #[serde(rename = "rxDesense24G")]
-    pub rxDesense24G: String,
-    // "rxDesense5G": 0,
+    pub rx_desense24_g: u64,
     #[serde(rename = "rxDesense5G")]
-    pub rxDesense5G: String,
-    // "rxDesense6G": null,
+    pub rx_desense5_g: u64,
     #[serde(rename = "rxDesense6G")]
-    pub rxDesense6G: String,
-    // "poePortStatus": "1000Mbps",
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub rx_desense6_g: u64,
     #[serde(rename = "poePortStatus")]
-    pub poePortStatus: String,
-    // "cumulativeTx24G": 0,
+    pub poe_port_status: String,
     #[serde(rename = "cumulativeTx24G")]
-    pub cumulativeTx24G: String,
-    // "cumulativeTx5G": 979557632296,
+    pub cumulative_tx24_g: u64,
     #[serde(rename = "cumulativeTx5G")]
-    pub cumulativeTx5G: String,
-    // "cumulativeTx6G": null,
+    pub cumulative_tx5_g: u64,
     #[serde(rename = "cumulativeTx6G")]
-    pub cumulativeTx6G: String,
-    // "cumulativeRx24G": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cumulative_tx6_g: u64,
     #[serde(rename = "cumulativeRx24G")]
-    pub cumulativeRx24G: String,
-    // "cumulativeRx5G": 22239211175,
+    pub cumulative_rx24_g: u64,
     #[serde(rename = "cumulativeRx5G")]
-    pub cumulativeRx5G: String,
-    // "cumulativeRx6G": null,
+    pub cumulative_rx5_g: u64,
     #[serde(rename = "cumulativeRx6G")]
-    pub cumulativeRx6G: String,
-    // "cumulativeTxRx24G": 0,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cumulative_rx6_g: u64,
     #[serde(rename = "cumulativeTxRx24G")]
-    pub cumulativeTxRx24G: String,
-    // "cumulativeTxRx5G": 1001796843471,
+    pub cumulative_tx_rx24_g: u64,
     #[serde(rename = "cumulativeTxRx5G")]
-    pub cumulativeTxRx5G: String,
-    // "cumulativeTxRx6G": null,
+    pub cumulative_tx_rx5_g: u64,
     #[serde(rename = "cumulativeTxRx6G")]
-    pub cumulativeTxRx6G: String,
-    // "isDual5gMode": false
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub cumulative_tx_rx6_g: u64,
     #[serde(rename = "isDual5gMode")]
-    pub isDual5gMode: String,
+    pub is_dual5g_mode: bool,
     #[serde(rename = "indoorMapXy")]
-    pub indoorMapXy: MapXY,
+    #[serde(deserialize_with = "deserialize_null_default")]
+    pub indoor_map_xy: MapXY,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct MapXY {
-    pub x: Option<f32>,
-    pub y: Option<f32>,
+    pub x: f32,
+    pub y: f32,
 }
+
+// #[serde(deserialize_with="nullable_u64")]

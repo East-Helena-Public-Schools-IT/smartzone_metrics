@@ -16,8 +16,7 @@ services:
     network_mode: host
     image: grafana/grafana:latest
     volumes:
-      - ./grafana.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-      # - grafana_storage:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin

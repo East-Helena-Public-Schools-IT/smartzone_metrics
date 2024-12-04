@@ -68,7 +68,7 @@ async fn metrics(
         // TODO query aps will NOT return all the aps in a zone, it has the `hasMore` flag for a reason
             .query_aps(
                 aps.iter()
-                    .map(|f| smartzone::Filter::from(f))
+                    .map(smartzone::Filter::from)
                     .collect::<smartzone::FilterContainer>(),
             )
             .await;
@@ -106,28 +106,21 @@ async fn metrics(
             alerts.record(ap.alerts, &data);
 
             // airtime utilization flagged
-            let aflag = if
-                // ap.is_airtime_utilization24_gflagged ||
-                // ap.is_airtime_utilization50_gflagged ||
-                // ap.is_airtime_utilization6_gflagged
-                true
-            { 1 } else { 0 };
-            let flags = meter.u64_gauge("ap_is_airtime_flagged").init();
-            flags.record(aflag, &data);
+            let flags = meter.u64_gauge("ap_airtime_24g").init();
+            flags.record(ap.airtime_24g, &data);
+            let flags = meter.u64_gauge("ap_airtime_5g").init();
+            flags.record(ap.airtime_5g, &data);
 
             // connection failures
             let fail = meter.f64_gauge("ap_failures").init();
             fail.record(ap.connection_failures as f64, &data);
 
             // latency flagged
-            let lflag = if 
-                // ap.is_latency24_gflagged ||
-                // ap.is_latency50_gflagged ||
-                // ap.is_latency6_gflagged
-                true
-            { 1 } else { 0 };
-            let flags = meter.u64_gauge("ap_is_latency_flagged").init();
-            flags.record(lflag, &data);
+            let flags = meter.u64_gauge("ap_latency_5g").init();
+            flags.record(ap.latency50_g, &data);
+            let flags = meter.u64_gauge("ap_latency_24g").init();
+            flags.record(ap.latency24g, &data);
+
         }
     }
 

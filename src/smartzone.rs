@@ -3,7 +3,8 @@ use reqwest::{
     Client, StatusCode,
 };
 use serde::{Deserialize, Deserializer, Serialize};
-use std::sync::LazyLock;
+use core::hash;
+use std::{fs::File, hash::{DefaultHasher, Hash, Hasher}, io::Write, sync::LazyLock};
 
 use crate::ap;
 
@@ -150,7 +151,17 @@ impl Auth {
                 .await
                 .unwrap();
             if let Ok(json) = response.text().await {
-                return serde_json::from_str::<QueryResults<ap::AP>>(&json).unwrap();
+                match serde_json::from_str::<QueryResults<ap::AP>>(&json) {
+                    Ok(res) => return res,
+                    Err(err) => {
+                        // write the error out so it can be debugged
+                        println!("{}", err);
+                        let mut file = File::create("error.json").unwrap();
+                        file.write_all(&json.as_bytes()).unwrap();
+                        let mut file = File::create("error_column").unwrap();
+                        file.write_all(err.column().to_string().as_bytes()).unwrap();
+                    },
+                }
             }
         }
         panic!("Failed to query aps")
@@ -221,181 +232,11 @@ pub struct QueryResults<T> {
     pub list: Vec<T>
 }
 
-#[derive(Deserialize, Debug)]
-pub struct FullAp {
-    #[serde(rename = "deviceName")]
-    pub device_name: String,
-    pub description: String,
-    pub status: String,
-    pub model: String,
-    #[serde(deserialize_with="nullable_i64")]
-    pub alerts: i64, 
-    pub ip: String,
-    #[serde(rename = "ipv6Address")]
-    pub ipv4_address: String,
-
-    pub serial: String,
-    #[serde(rename = "apMac")]
-    pub ap_mac: String,
-    #[serde(rename = "lastSeen")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub last_seen: u64,
-
-    // ======================================
-    // RX / TX
-    // ======================================
-    #[serde(deserialize_with="nullable_u64")]
-    pub tx: u64,
-    #[serde(rename = "tx24G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub tx_24g: u64,
-    #[serde(rename = "tx50G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub tx_5g: u64,
-    #[serde(rename = "tx6G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub tx_6g: u64,
-    #[serde(deserialize_with="nullable_u64")]
-    pub rx: u64,
-    #[serde(rename = "rx24G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub rx_24g: u64,
-    #[serde(rename = "rx50G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub rx_5g: u64,
-    #[serde(rename = "rx6G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub rx_6g: u64,
-
-    #[serde(rename = "channel24G")]
-    pub channel_24g: String,
-    #[serde(rename = "channel5G")]
-    pub channel_5g: String,
-    #[serde(rename = "channel6G")]
-    pub channel_6g: String,
-
-
-    // ======================================
-    // Clients
-    // ======================================   
-    #[serde(rename = "numClients")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub num_clients: u64,
-    #[serde(rename = "numClients5G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub num_clients_5g: u64,
-    #[serde(rename = "numClients24G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub num_clients_24g: u64,
-    #[serde(rename = "numClients6G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub num_clients_6g: u64,
-    #[serde(rename = "isCapacity24GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_capacity24_gflagged: bool,
-    #[serde(rename = "isCapacity50GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_capacity50_gflagged: bool,
-    #[serde(rename = "isCapacity6GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_capacity6_gflagged: bool,
- 
-
-    #[serde(rename = "isOverallHealthStatusFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_overall_health_status_flagged: bool,
-
-    // ======================================
-    // Latency
-    // ======================================   
-    #[serde(rename = "latency24G")]
-    #[serde(deserialize_with="nullable_f32")]
-    pub latency24_g: f32,
-    #[serde(rename = "latency50G")]
-    #[serde(deserialize_with="nullable_f32")]
-    pub latency50_g: f32,
-    #[serde(rename = "latency6G")]
-    #[serde(deserialize_with="nullable_f32")]
-    pub latency6_g: f32,
-    #[serde(rename = "isLatency24GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency24_gflagged: bool,
-    #[serde(rename = "isLatency50GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency50_gflagged: bool,
-    #[serde(rename = "isLatency6GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency6_gflagged: bool,
-
-    // ======================================
-    // Connection Failures
-    // ======================================   
-    #[serde(rename = "connectionFailure")]
-    #[serde(deserialize_with="nullable_f32")]
-    pub connection_failures: f32,
-    #[serde(rename = "isConnectionFailure24GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_connection_failure24_gflagged: bool,
-    #[serde(rename = "isConnectionFailure50GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_connection_failure50_gflagged: bool,
-    #[serde(rename = "isConnectionFailure6GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_connection_failure6_gflagged: bool,
-    #[serde(rename = "isConnectionTotalCountFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_connection_total_count_flagged: bool,
-    #[serde(rename = "isConnectionFailureFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_connection_failure_flagged: bool,
-
-    // ======================================
-    // Airtime Utilization
-    // ======================================   
-    #[serde(rename = "airtime24G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub airtime_24g: u64,
-    #[serde(rename = "airtime5G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub airtime_5g: u64,
-    #[serde(rename = "airtime6G")]
-    #[serde(deserialize_with="nullable_u64")]
-    pub airtime_6g: u64,
-    #[serde(rename = "isAirtimeUtilization24GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_airtime_utilization24_gflagged: bool,
-    #[serde(rename = "isAirtimeUtilization50GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_airtime_utilization50_gflagged: bool,
-    #[serde(rename = "isAirtimeUtilization6GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_airtime_utilization6_gflagged: bool,
-    }
-
-fn nullable_u64<'de, D>(d: D) -> Result<u64, D::Error> where D: Deserializer<'de> {
-    Deserialize::deserialize(d)
-        .map(|x: Option<_>| {
-            x.unwrap_or(0u64)
-        })
-}
-
-fn nullable_i64<'de, D>(d: D) -> Result<i64, D::Error> where D: Deserializer<'de> {
-    Deserialize::deserialize(d)
-        .map(|x: Option<_>| {
-            x.unwrap_or(0i64)
-        })
-}
-
-fn nullable_f32<'de, D>(d: D) -> Result<f32, D::Error> where D: Deserializer<'de> {
-    Deserialize::deserialize(d)
-        .map(|x: Option<_>| {
-            x.unwrap_or(0f32)
-        })
-}
-
-fn nullable_bool<'de, D>(d: D) -> Result<bool, D::Error> where D: Deserializer<'de> {
-    Deserialize::deserialize(d)
-        .map(|x: Option<_>| {
-            x.unwrap_or(false)
-        })
+pub fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
+where
+    T: Default + Deserialize<'de>,
+    D: Deserializer<'de>,
+{
+    let opt = Option::deserialize(deserializer)?;
+    Ok(opt.unwrap_or_default())
 }
