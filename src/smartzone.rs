@@ -5,6 +5,8 @@ use reqwest::{
 use serde::{Deserialize, Deserializer, Serialize};
 use std::sync::LazyLock;
 
+use crate::ap;
+
 static URL: LazyLock<String> =
     LazyLock::new(|| dotenvy::var("RUST_URL").expect("Set RUST_URL env"));
 
@@ -21,8 +23,8 @@ pub struct Auth {
 }
 
 impl Auth {
-    pub fn new(username: String, password: String) -> Self {
-        Self {
+    pub async fn new(username: String, password: String) -> Self {
+        let auth = Self {
             username,
             password,
             time_zone_utc_offset: "-07:00".to_string(),
@@ -32,8 +34,27 @@ impl Auth {
                 .build()
                 .expect("Building reqwest client failed."),
             session: None,
+        };
+
+        #[derive(Deserialize)]
+        struct ApiInfo {
+            #[serde(rename = "apiSupportVersions")]
+            api_support_versions: Vec<String>
         }
+
+        let res = auth.client.get(format!("{}/wsg/api/public/apiInfo", &*URL)).send().await.expect("Failed to query apiinfo");
+        let body = res.text().await.expect("Failed to get apiinfo response");
+        let info = serde_json::from_str::<ApiInfo>(&body).expect("Failed to parse apiinfo response");
+
+        let mut api_supported= false;
+        for v in info.api_support_versions {
+            api_supported = v == "v11_1" || api_supported;
+        }
+        assert!(api_supported, "Api version not supported by smartzone client {}", &*URL);
+
+        auth
     }
+
     pub async fn login(&mut self) {
         let login = self
             .client
@@ -83,7 +104,7 @@ impl Auth {
                 .header("Cookie", s)
                 .send()
                 .await
-                .unwrap();
+                .expect("System went offline");
             if let Ok(json) = response.text().await {
                 return serde_json::from_str::<Zones>(&json).unwrap().list;
             }
@@ -115,7 +136,7 @@ impl Auth {
         panic!("Failed to get aps in zones")
     }
 
-    pub async fn query_aps(&self, filter: FilterContainer) -> QueryResults<FullAp> {
+    pub async fn query_aps(&self, filter: FilterContainer) -> QueryResults<ap::AP> {
         if let Some(s) = &self.session {
             let response = self
                 .client
@@ -129,7 +150,7 @@ impl Auth {
                 .await
                 .unwrap();
             if let Ok(json) = response.text().await {
-                return serde_json::from_str::<QueryResults<FullAp>>(&json).unwrap();
+                return serde_json::from_str::<QueryResults<ap::AP>>(&json).unwrap();
             }
         }
         panic!("Failed to query aps")
@@ -202,19 +223,27 @@ pub struct QueryResults<T> {
 
 #[derive(Deserialize, Debug)]
 pub struct FullAp {
-    pub ip: String,
     #[serde(rename = "deviceName")]
     pub device_name: String,
+    pub description: String,
     pub status: String,
+    pub model: String,
     #[serde(deserialize_with="nullable_i64")]
     pub alerts: i64, 
-    pub model: String,
+    pub ip: String,
+    #[serde(rename = "ipv6Address")]
+    pub ipv4_address: String,
+
+    pub serial: String,
     #[serde(rename = "apMac")]
     pub ap_mac: String,
     #[serde(rename = "lastSeen")]
     #[serde(deserialize_with="nullable_u64")]
     pub last_seen: u64,
 
+    // ======================================
+    // RX / TX
+    // ======================================
     #[serde(deserialize_with="nullable_u64")]
     pub tx: u64,
     #[serde(rename = "tx24G")]
@@ -242,6 +271,13 @@ pub struct FullAp {
     pub channel_24g: String,
     #[serde(rename = "channel5G")]
     pub channel_5g: String,
+    #[serde(rename = "channel6G")]
+    pub channel_6g: String,
+
+
+    // ======================================
+    // Clients
+    // ======================================   
     #[serde(rename = "numClients")]
     #[serde(deserialize_with="nullable_u64")]
     pub num_clients: u64,
@@ -251,22 +287,9 @@ pub struct FullAp {
     #[serde(rename = "numClients24G")]
     #[serde(deserialize_with="nullable_u64")]
     pub num_clients_24g: u64,
-
-    #[serde(rename = "connectionFailure")]
-    #[serde(deserialize_with="nullable_f32")]
-    pub connection_failures: f32,
-    #[serde(rename = "isOverallHealthStatusFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_overall_health_status_flagged: bool,
-    #[serde(rename = "isLatency24GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency24_gflagged: bool,
-    #[serde(rename = "isLatency50GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency50_gflagged: bool,
-    #[serde(rename = "isLatency6GFlagged")]
-    #[serde(deserialize_with="nullable_bool")]
-    pub is_latency6_gflagged: bool,
+    #[serde(rename = "numClients6G")]
+    #[serde(deserialize_with="nullable_u64")]
+    pub num_clients_6g: u64,
     #[serde(rename = "isCapacity24GFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_capacity24_gflagged: bool,
@@ -276,6 +299,40 @@ pub struct FullAp {
     #[serde(rename = "isCapacity6GFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_capacity6_gflagged: bool,
+ 
+
+    #[serde(rename = "isOverallHealthStatusFlagged")]
+    #[serde(deserialize_with="nullable_bool")]
+    pub is_overall_health_status_flagged: bool,
+
+    // ======================================
+    // Latency
+    // ======================================   
+    #[serde(rename = "latency24G")]
+    #[serde(deserialize_with="nullable_f32")]
+    pub latency24_g: f32,
+    #[serde(rename = "latency50G")]
+    #[serde(deserialize_with="nullable_f32")]
+    pub latency50_g: f32,
+    #[serde(rename = "latency6G")]
+    #[serde(deserialize_with="nullable_f32")]
+    pub latency6_g: f32,
+    #[serde(rename = "isLatency24GFlagged")]
+    #[serde(deserialize_with="nullable_bool")]
+    pub is_latency24_gflagged: bool,
+    #[serde(rename = "isLatency50GFlagged")]
+    #[serde(deserialize_with="nullable_bool")]
+    pub is_latency50_gflagged: bool,
+    #[serde(rename = "isLatency6GFlagged")]
+    #[serde(deserialize_with="nullable_bool")]
+    pub is_latency6_gflagged: bool,
+
+    // ======================================
+    // Connection Failures
+    // ======================================   
+    #[serde(rename = "connectionFailure")]
+    #[serde(deserialize_with="nullable_f32")]
+    pub connection_failures: f32,
     #[serde(rename = "isConnectionFailure24GFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_connection_failure24_gflagged: bool,
@@ -291,6 +348,19 @@ pub struct FullAp {
     #[serde(rename = "isConnectionFailureFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_connection_failure_flagged: bool,
+
+    // ======================================
+    // Airtime Utilization
+    // ======================================   
+    #[serde(rename = "airtime24G")]
+    #[serde(deserialize_with="nullable_u64")]
+    pub airtime_24g: u64,
+    #[serde(rename = "airtime5G")]
+    #[serde(deserialize_with="nullable_u64")]
+    pub airtime_5g: u64,
+    #[serde(rename = "airtime6G")]
+    #[serde(deserialize_with="nullable_u64")]
+    pub airtime_6g: u64,
     #[serde(rename = "isAirtimeUtilization24GFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_airtime_utilization24_gflagged: bool,
@@ -300,7 +370,7 @@ pub struct FullAp {
     #[serde(rename = "isAirtimeUtilization6GFlagged")]
     #[serde(deserialize_with="nullable_bool")]
     pub is_airtime_utilization6_gflagged: bool,
-}
+    }
 
 fn nullable_u64<'de, D>(d: D) -> Result<u64, D::Error> where D: Deserializer<'de> {
     Deserialize::deserialize(d)

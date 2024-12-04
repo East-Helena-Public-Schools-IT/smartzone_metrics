@@ -12,6 +12,7 @@ use smartzone::Auth;
 use tokio::sync::RwLock;
 
 mod smartzone;
+mod ap;
 
 struct Meters {
     counters: HashMap<String, Gauge<i64>>,
@@ -27,7 +28,7 @@ async fn main() {
     let mut session = smartzone::Auth::new(
         dotenvy::var("RUST_USERNAME").expect("Set RUST_USERNAME"),
         dotenvy::var("RUST_PASSWORD").expect("Set RUST_PASSWORD"),
-    );
+    ).await;
     session.login().await;
     let auth = Arc::new(session);
 
@@ -64,6 +65,7 @@ async fn metrics(
         // Get all the APs in the zone
         let aps = auth.get_aps_in_zone(zone).await;
         let full_aps = auth
+        // TODO query aps will NOT return all the aps in a zone, it has the `hasMore` flag for a reason
             .query_aps(
                 aps.iter()
                     .map(|f| smartzone::Filter::from(f))
@@ -81,6 +83,7 @@ async fn metrics(
                     KeyValue::new("Status", ap.status.clone()),
                     KeyValue::new("Zone", zone.name.clone()),
                     KeyValue::new("LastSeen", ap.last_seen.to_string()),
+                    KeyValue::new("Model", ap.model.to_string()),
                 ];
 
             let lock = meters.write().await;
@@ -99,14 +102,15 @@ async fn metrics(
             clients.record(ap.num_clients, &data);
 
             // alerts
-            let alerts = meter.i64_gauge("ap_alerts").with_description("Total number of alerts").init();
+            let alerts = meter.u64_gauge("ap_alerts").with_description("Total number of alerts").init();
             alerts.record(ap.alerts, &data);
 
             // airtime utilization flagged
             let aflag = if
-                ap.is_airtime_utilization24_gflagged ||
-                ap.is_airtime_utilization50_gflagged ||
-                ap.is_airtime_utilization6_gflagged
+                // ap.is_airtime_utilization24_gflagged ||
+                // ap.is_airtime_utilization50_gflagged ||
+                // ap.is_airtime_utilization6_gflagged
+                true
             { 1 } else { 0 };
             let flags = meter.u64_gauge("ap_is_airtime_flagged").init();
             flags.record(aflag, &data);
@@ -117,9 +121,10 @@ async fn metrics(
 
             // latency flagged
             let lflag = if 
-                ap.is_latency24_gflagged ||
-                ap.is_latency50_gflagged ||
-                ap.is_latency6_gflagged
+                // ap.is_latency24_gflagged ||
+                // ap.is_latency50_gflagged ||
+                // ap.is_latency6_gflagged
+                true
             { 1 } else { 0 };
             let flags = meter.u64_gauge("ap_is_latency_flagged").init();
             flags.record(lflag, &data);
