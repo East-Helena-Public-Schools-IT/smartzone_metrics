@@ -189,7 +189,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": 300000,
             "stacking": {
               "group": "A",
@@ -367,7 +367,7 @@
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "auto",
+            "showPoints": "never",
             "spanNulls": 300000,
             "stacking": {
               "group": "A",
