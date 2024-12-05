@@ -34,7 +34,7 @@
           "links": [
             {
               "title": "Drilldown",
-              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}"
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}&${__url_time_range}"
             }
           ],
           "mappings": [],
@@ -205,6 +205,13 @@
               "mode": "off"
             }
           },
+          "links": [
+            {
+              "targetBlank": false,
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}&${__url_time_range}"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -383,6 +390,12 @@
               "mode": "off"
             }
           },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}&${__url_time_range}"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -450,6 +463,12 @@
           "color": {
             "mode": "thresholds"
           },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}&${__url_time_range}"
+            }
+          ],
           "mappings": [],
           "min": 0,
           "thresholds": {
