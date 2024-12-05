@@ -868,7 +868,7 @@
           "links": [
             {
               "title": "",
-              "url": "http://10.22.98.2:3000/d/ee61df9lq50jkf/ap-by-ssid?var-selected_ap=${selected_ap:queryparam}&var-selected_ssid=${__field.labels.SSID}"
+              "url": "http://10.22.98.2:3000/d/ee61df9lq50jkf/ap-by-ssid?var-selected_ap=${selected_ap:queryparam.label}&var-selected_ssid=${__field.labels.SSID}"
             }
           ],
           "mappings": [],
