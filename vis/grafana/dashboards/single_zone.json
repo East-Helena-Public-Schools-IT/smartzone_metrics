@@ -84,7 +84,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "topk(5, sort(ap_tx))",
+          "expr": "topk(5, sort(ap_tx{Zone=\"$selected_zone\"}))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
