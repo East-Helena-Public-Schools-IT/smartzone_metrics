@@ -67,7 +67,7 @@
           "links": [
             {
               "title": "Drilldown",
-              "url": "http://10.22.98.2:3000/d/ce5ud52gy79xcf/single-zone?var-selected_zone=${__field.labels.DeviceName}&${__url_time_range}"
+              "url": "http://10.22.98.2:3000/d/ce5ud52gy79xcf/single-zone?var-selected_zone=${__field.labels.Zone}&${__url_time_range}"
             }
           ],
           "mappings": [],
