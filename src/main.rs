@@ -72,6 +72,7 @@ async fn clients(
                 KeyValue::new("ApName", client.ap_name.clone()),
                 KeyValue::new("Hostname", client.hostname.clone()),
                 KeyValue::new("Mac", client.client_mac.clone()),
+                KeyValue::new("Zone", zone.name.clone()),
             ];
 
             let mut data_verbose = vec![
