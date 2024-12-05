@@ -31,6 +31,12 @@
           "color": {
             "mode": "thresholds"
           },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -89,7 +95,7 @@
           "useBackend": false
         }
       ],
-      "title": "Panel Title",
+      "title": "Top APs by Data",
       "type": "stat"
     },
     {
@@ -249,7 +255,7 @@
           "useBackend": false
         }
       ],
-      "title": "Connection Failtures",
+      "title": "Connection Failures",
       "type": "timeseries"
     },
     {
@@ -559,6 +565,6 @@
   "timezone": "browser",
   "title": "Single Zone",
   "uid": "ce5ud52gy79xcf",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
