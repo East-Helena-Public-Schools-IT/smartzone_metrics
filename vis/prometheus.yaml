@@ -15,6 +15,12 @@ scrape_configs:
         action: drop
         regex: 'R550'
 
+  - job_name: sz_clients
+    scrape_interval: 10m
+    metrics_path: /clients
+    static_configs:
+      - targets: ['localhost:8000']
+
   - job_name: prometheus
     static_configs:
       - targets: ['localhost:9090']
