@@ -190,7 +190,7 @@
           "expr": "sum by(Mac) (client_tx{Mac=\"$selected_client\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "Transmit",
+          "legendFormat": "Receive (Down)",
           "range": true,
           "refId": "A",
           "useBackend": false
@@ -206,7 +206,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
-          "legendFormat": "Receive",
+          "legendFormat": "Transmit (Up)",
           "range": true,
           "refId": "B",
           "useBackend": false
