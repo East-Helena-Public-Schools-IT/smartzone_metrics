@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 7,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -124,8 +124,82 @@
           "useBackend": false
         }
       ],
-      "title": "Panel Title",
+      "title": "",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/fe615pdwjoni8e/client?${__url_time_range}&var-selected_client=${__field.labels.Mac}\r\n"
+            }
+          ],
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 7,
+        "x": 10,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(OsType) (client_tx{ApName=\"$selected_ap\", SSID=\"$selected_ssid\"})",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "{{Hostname}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "By OS",
+      "type": "piechart"
     },
     {
       "datasource": {
@@ -198,7 +272,7 @@
           "useBackend": false
         }
       ],
-      "title": "Panel Title",
+      "title": "",
       "type": "piechart"
     }
   ],
@@ -253,6 +327,6 @@
   "timezone": "browser",
   "title": "AP by SSID",
   "uid": "ee61df9lq50jkf",
-  "version": 3,
+  "version": 1,
   "weekStart": ""
 }

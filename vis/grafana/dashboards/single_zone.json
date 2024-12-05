@@ -159,7 +159,7 @@
           "useBackend": false
         }
       ],
-      "title": "Clients",
+      "title": "Total Clients",
       "type": "stat"
     },
     {
@@ -450,7 +450,7 @@
           "useBackend": false
         }
       ],
-      "title": "Clients",
+      "title": "Clients by AP",
       "type": "timeseries"
     },
     {
@@ -620,7 +620,7 @@
           "useBackend": false
         }
       ],
-      "title": "Clients",
+      "title": "Clients by SSID",
       "type": "piechart"
     }
   ],
