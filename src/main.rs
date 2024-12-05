@@ -8,11 +8,12 @@ use prometheus::Registry;
 use rocket::{
     get, routes, State,
 };
-use smartzone::{Auth, FilterContainer};
+use smartzone::{Auth, FilterContainer, Query};
 use tokio::sync::RwLock;
 
 mod smartzone;
 mod ap;
+mod client;
 
 struct Meters {
     meter: Meter,
@@ -36,7 +37,7 @@ async fn main() {
     };
 
     let _ = rocket::build()
-        .mount("/", routes![metrics])
+        .mount("/", routes![metrics, clients])
         .manage(registry)
         .manage(RwLock::new(dd))
         .manage(auth.clone())
@@ -47,6 +48,63 @@ async fn main() {
     meter_provider.shutdown().unwrap();
 }
 
+#[get("/clients")]
+async fn clients(
+    state: &State<Registry>,
+    auth: &State<Arc<Auth>>,
+    meters: &State<RwLock<Meters>>,
+) -> String {
+    // Go thru all the zones
+    for zone in &auth.get_zones().await {
+        // Get all the APs in the zone
+        let mut filter: FilterContainer = zone.into();
+        let mut left = true;
+        let mut all = Vec::new();
+        while left {
+            let mut clients = auth.query::<client::Client>(filter.clone(), Query::Clients).await;
+            left = clients.has_more;
+            filter.page += 1;
+            all.append(&mut clients.list);
+        }
+        for client in all {
+            let data = vec![
+                KeyValue::new("ApMac", client.ap_mac.clone()),
+                KeyValue::new("ApName", client.ap_name.clone()),
+                KeyValue::new("Hostname", client.hostname.clone()),
+                KeyValue::new("Mac", client.client_mac.clone()),
+            ];
+
+            let mut data_verbose = vec![
+                KeyValue::new("OsType", client.os_type.clone()),
+                KeyValue::new("OsVendorType", client.os_vendor_type.clone()),
+                KeyValue::new("IP", client.ip_address.clone()),
+                KeyValue::new("Vlan", client.vlan.to_string()),
+                KeyValue::new("ModelName", client.model_name.clone()),
+                KeyValue::new("SSID", client.ssid.clone()),
+                KeyValue::new("SessionStartTime", client.session_start_time.to_string()),
+            ];
+            data_verbose.append(&mut data.clone());
+
+            let lock = meters.write().await;
+            let meter = &lock.meter;
+
+            // rx
+            let g = meter.u64_gauge("client_rx").with_description("rx bytes").init();
+            g.record(client.rx_bytes, &data_verbose);
+
+            // tx
+            let g = meter.u64_gauge("client_tx").with_description("tx bytes").init();
+            g.record(client.tx_bytes, &data_verbose);
+
+        }
+    }
+    let mut buffer = String::new();
+    let encoder = prometheus::TextEncoder::new();
+    let metric_families = state.gather();
+    encoder.encode_utf8(&metric_families, &mut buffer).unwrap();
+    buffer
+}
+
 // "/metrics" Is where prometheus expects to gather metrics at.
 // If you change this make sure your prometheus config reflects the change.
 #[get("/metrics")]
@@ -55,9 +113,6 @@ async fn metrics(
     auth: &State<Arc<Auth>>,
     meters: &State<RwLock<Meters>>,
 ) -> String {
-    let mut buffer = String::new();
-    let encoder = prometheus::TextEncoder::new();
-
     // Go thru all the zones
     for zone in &auth.get_zones().await {
         // Get all the APs in the zone
@@ -65,7 +120,8 @@ async fn metrics(
         let mut left = true;
         let mut all_aps = Vec::new();
         while left {
-            let mut aps = auth.query_aps(filter.clone()).await;
+            // let mut aps = auth.query_aps(filter.clone()).await;
+            let mut aps = auth.query::<ap::AP>(filter.clone(), Query::Aps).await;
             left = aps.has_more;
             filter.page += 1;
             all_aps.append(&mut aps.list);
@@ -130,6 +186,8 @@ async fn metrics(
         }
     }
 
+    let mut buffer = String::new();
+    let encoder = prometheus::TextEncoder::new();
     let metric_families = state.gather();
     encoder.encode_utf8(&metric_families, &mut buffer).unwrap();
     buffer

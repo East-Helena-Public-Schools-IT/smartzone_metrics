@@ -5,7 +5,7 @@ use reqwest::{
 use serde::{Deserialize, Deserializer, Serialize};
 use std::{fs::File, io::Write, sync::LazyLock};
 
-use crate::ap;
+use crate::{ap, client};
 
 static URL: LazyLock<String> =
     LazyLock::new(|| dotenvy::var("RUST_URL").expect("Set RUST_URL env"));
@@ -112,12 +112,17 @@ impl Auth {
         panic!("Failed to get zones")
     }
 
-    pub async fn query_aps(&self, filter: FilterContainer) -> QueryResults<ap::AP> {
-        if let Some(s) = &self.session {
+    pub async fn query<T>(&self, filter: FilterContainer, opt: Query) -> QueryResults<T> where T: for<'a> Deserialize<'a> {
+        let ttype = match opt {
+            Query::Clients => "client",
+            Query::Aps => "ap",
+        };
+
+         if let Some(s) = &self.session {
             let response = self
                 .client
                 .post(format!(
-                    "{}/wsg/api/public/v11_1/query/ap",
+                    "{}/wsg/api/public/v11_1/query/{ttype}",
                     &*URL
                 ))
                 .header("Cookie", s)
@@ -126,7 +131,7 @@ impl Auth {
                 .await
                 .unwrap();
             if let Ok(json) = response.text().await {
-                match serde_json::from_str::<QueryResults<ap::AP>>(&json) {
+                match serde_json::from_str::<QueryResults<T>>(&json) {
                     Ok(res) => return res,
                     Err(err) => {
                         // write the error out so it can be debugged
@@ -139,8 +144,9 @@ impl Auth {
                 }
             }
         }
-        panic!("Failed to query aps")
+        panic!("Failed to query clients")
     }
+
 }
 
 #[derive(Deserialize, Debug)]
@@ -189,8 +195,6 @@ impl FromIterator<Filter> for FilterContainer {
 }
 
 
-
-
 #[derive(Serialize, Debug, Clone)]
 pub struct Filter {
     #[serde(rename = "type")]
@@ -212,12 +216,17 @@ impl From<&MiniAp> for Filter {
 #[derive(Deserialize, Debug)]
 pub struct QueryResults<T> {
     #[serde(rename = "totalCount")]
-    total_count: u8,
+    total_count: usize,
     #[serde(rename = "hasMore")]
     pub has_more: bool,
     #[serde(rename = "firstIndex")]
-    pub first_index: u8,
+    pub first_index: usize,
     pub list: Vec<T>
+}
+
+pub enum Query {
+    Clients,
+    Aps,
 }
 
 pub fn deserialize_null_default<'de, D, T>(deserializer: D) -> Result<T, D::Error>
