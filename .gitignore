@@ -1,2 +1,4 @@
 /target
 .env
+error.json
+error_column
