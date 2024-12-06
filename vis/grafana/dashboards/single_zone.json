@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 6,
   "links": [],
   "panels": [
     {
@@ -455,13 +455,45 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
         "uid": "prometheus"
       },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
           },
           "links": [
             {
@@ -470,83 +502,58 @@
             }
           ],
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "light-green",
                 "value": null
               },
               {
-                "color": "#EAB839",
-                "value": 20
-              },
-              {
-                "color": "red",
-                "value": 50
+                "color": "light-red",
+                "value": 2592000
               }
             ]
           },
-          "unit": "percent"
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 9,
+        "h": 10,
         "w": 20,
         "x": 0,
         "y": 20
       },
-      "id": 6,
+      "id": 9,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto"
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "11.3.2",
       "targets": [
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "sum by(DeviceName) (ap_airtime_5g{Zone=\"$selected_zone\"} > 10)",
+          "expr": "ap_uptime",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "5G {{DeviceName}}",
+          "legendFormat": "{{DeviceName}}",
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "prometheus"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "sum by(DeviceName) (ap_airtime_24g{Zone=\"$selected_zone\"} > 20)",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "2.4G {{DeviceName}}",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
         }
       ],
-      "title": "Airtime",
-      "type": "gauge"
+      "title": "Uptime",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -622,6 +629,101 @@
       ],
       "title": "Clients by SSID",
       "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.DeviceName}&${__url_time_range}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 20,
+        "x": 0,
+        "y": 30
+      },
+      "id": 6,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.3.2",
+      "targets": [
+        {
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(DeviceName) (ap_airtime_5g{Zone=\"$selected_zone\"} > 10)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "legendFormat": "5G {{DeviceName}}",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(DeviceName) (ap_airtime_24g{Zone=\"$selected_zone\"} > 20)",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "2.4G {{DeviceName}}",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Airtime",
+      "type": "gauge"
     }
   ],
   "preload": false,
