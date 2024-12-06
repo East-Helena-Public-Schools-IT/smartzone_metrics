@@ -942,7 +942,8 @@
               "url": "http://10.22.98.2:3000/d/be61c0w1fkiyof/ap-by-os?var-selected_ap=${selected_ap:queryparam.label}&var-selected_os=${__field.labels.OsType}"
             }
           ],
-          "mappings": []
+          "mappings": [],
+          "unit": "decbytes"
         },
         "overrides": []
       },
