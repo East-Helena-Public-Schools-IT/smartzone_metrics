@@ -543,7 +543,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "ap_uptime",
+          "expr": "max by(DeviceName) (ap_uptime{Zone=\"$selected_zone\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{DeviceName}}",
