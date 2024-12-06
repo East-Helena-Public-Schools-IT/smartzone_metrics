@@ -109,26 +109,37 @@ pub struct AP {
     #[serde(deserialize_with = "deserialize_null_default")]
     pub num_clients_6g: u64,
     #[serde(rename = "tx")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx: u64,
     #[serde(rename = "tx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_24g: u64,
     #[serde(rename = "tx50G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_50g: u64,
     #[serde(rename = "tx6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_6g: u64,
     #[serde(rename = "rx")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx: u64,
     #[serde(rename = "rx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx_24g: u64,
     #[serde(rename = "rx50G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx_50g: u64,
     #[serde(rename = "rx6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx_6g: u64,
     #[serde(rename = "txRx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_rx_24g: u64,
     #[serde(rename = "txRx50G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_rx_50g: u64,
     #[serde(rename = "txRx6G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_rx_6g: u64,
     #[serde(rename = "location")]
     pub location: String,
@@ -261,18 +272,25 @@ pub struct AP {
     #[serde(rename = "ipsecTxPkts")]
     pub ipsec_tx_pkts: u64,
     #[serde(rename = "ipsecRxPkts")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_rx_pkts: u64,
     #[serde(rename = "ipsecTxBytes")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_tx_bytes: u64,
     #[serde(rename = "ipsecRxBytes")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_rx_bytes: u64,
     #[serde(rename = "ipsecTxDropPkts")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_tx_drop_pkts: u64,
     #[serde(rename = "ipsecRxDropPkts")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_rx_drop_pkts: u64,
     #[serde(rename = "ipsecTxIdleTime")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_tx_idle_time: u64,
     #[serde(rename = "ipsecRxIdleTime")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub ipsec_rx_idle_time: u64,
     #[serde(rename = "ipType")]
     pub ip_type: String,
@@ -377,8 +395,10 @@ pub struct AP {
     #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_power_offset6_g: u64,
     #[serde(rename = "rxDesense24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx_desense24_g: u64,
     #[serde(rename = "rxDesense5G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub rx_desense5_g: u64,
     #[serde(rename = "rxDesense6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
@@ -386,22 +406,28 @@ pub struct AP {
     #[serde(rename = "poePortStatus")]
     pub poe_port_status: String,
     #[serde(rename = "cumulativeTx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_tx24_g: u64,
     #[serde(rename = "cumulativeTx5G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_tx5_g: u64,
     #[serde(rename = "cumulativeTx6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_tx6_g: u64,
     #[serde(rename = "cumulativeRx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_rx24_g: u64,
     #[serde(rename = "cumulativeRx5G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_rx5_g: u64,
     #[serde(rename = "cumulativeRx6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_rx6_g: u64,
     #[serde(rename = "cumulativeTxRx24G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_tx_rx24_g: u64,
     #[serde(rename = "cumulativeTxRx5G")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub cumulative_tx_rx5_g: u64,
     #[serde(rename = "cumulativeTxRx6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
