@@ -42,6 +42,12 @@
             "lineWidth": 0,
             "spanNulls": 600000
           },
+          "links": [
+            {
+              "title": "Drilldown",
+              "url": "http://10.22.98.2:3000/d/ae5xi7pa3lssga/single-ap?var-selected_ap=${__field.labels.ApName}&${__url_time_range}"
+            }
+          ],
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -778,6 +784,6 @@
   "timezone": "browser",
   "title": "Client",
   "uid": "fe615pdwjoni8e",
-  "version": 11,
+  "version": 1,
   "weekStart": ""
 }
