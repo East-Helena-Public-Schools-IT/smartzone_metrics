@@ -17,6 +17,7 @@ pub struct AP {
     #[serde(rename = "ipv6Address")]
     pub ipv6_address: String,
     #[serde(rename = "txRx")]
+    #[serde(deserialize_with = "deserialize_null_default")]
     pub tx_rx: u64,
     #[serde(rename = "noise24G")]
     pub noise_24g: i64,
