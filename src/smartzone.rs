@@ -5,8 +5,6 @@ use reqwest::{
 use serde::{Deserialize, Deserializer, Serialize};
 use std::{fs::File, io::Write, sync::LazyLock};
 
-use crate::{ap, client};
-
 static URL: LazyLock<String> =
     LazyLock::new(|| dotenvy::var("RUST_URL").expect("Set RUST_URL env"));
 

@@ -388,21 +388,21 @@ pub struct AP {
     #[serde(rename = "monitoringEnabled")]
     pub monitoring_enabled: bool,
     #[serde(rename = "txPowerOffset24G")]
-    pub tx_power_offset24_g: u64,
+    pub tx_power_offset24_g: i64,
     #[serde(rename = "txPowerOffset5G")]
-    pub tx_power_offset5_g: u64,
+    pub tx_power_offset5_g: i64,
     #[serde(rename = "txPowerOffset6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
-    pub tx_power_offset6_g: u64,
+    pub tx_power_offset6_g: i64,
     #[serde(rename = "rxDesense24G")]
     #[serde(deserialize_with = "deserialize_null_default")]
-    pub rx_desense24_g: u64,
+    pub rx_desense24_g: i64,
     #[serde(rename = "rxDesense5G")]
     #[serde(deserialize_with = "deserialize_null_default")]
-    pub rx_desense5_g: u64,
+    pub rx_desense5_g: i64,
     #[serde(rename = "rxDesense6G")]
     #[serde(deserialize_with = "deserialize_null_default")]
-    pub rx_desense6_g: u64,
+    pub rx_desense6_g: i64,
     #[serde(rename = "poePortStatus")]
     pub poe_port_status: String,
     #[serde(rename = "cumulativeTx24G")]
